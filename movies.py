@@ -1,11 +1,12 @@
 import random
+import sys
 from datetime import datetime
 
 import matplotlib.pyplot as plt
 from colorama import Fore
 from fuzzywuzzy import fuzz
 
-import movie_storage as ms
+import movie_storage_sql as ms
 
 START_RATING = 0
 END_RATING = 10.0
@@ -165,7 +166,7 @@ def delete_movie(movies: list):
     name_movie = input(Fore.GREEN + "Please enter the movie name to delete:")
     for movie in movies:
         if name_movie == movie['Title']:
-            ms.delete_movie(movie)
+            ms.delete_movie(movie['Title'])
             print(Fore.BLUE + f"Movie {name_movie} successfully deleted!")
             return None
 
@@ -391,6 +392,11 @@ def main():
         11: histogram
     }
 
+    #movies = ms.list_movies()
+    #print(type(movies))
+    #print(movies)
+    #sys.exit(0)
+
     while True:
         print_menu()
 
@@ -401,7 +407,7 @@ def main():
                 print("Bye!")
                 return False
             if option in menu_functions:
-                menu_functions[option](ms.get_movies())
+                menu_functions[option](ms.list_movies())
                 pause()
             else:
                 print(Fore.RED + "Wrong input")
