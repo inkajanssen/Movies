@@ -13,7 +13,8 @@ with engine.connect() as connection:
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             title TEXT UNIQUE NOT NULL,
             year INTEGER NOT NULL,
-            rating REAL NOT NULL
+            rating TEXT NOT NULL,
+            poster TEXT NOT NULL
         )
     """))
     connection.commit()
@@ -23,22 +24,28 @@ def list_movies():
     """
     Retrieve all movies from the database.
     """
-    with engine.connect() as connection:
-        result = connection.execute(text("SELECT title, year, rating FROM movies"))
+    with (engine.connect() as connection):
+        result = connection.execute(text
+                                    ("SELECT title, year, rating, poster"
+                                     " FROM movies"))
         movies = result.fetchall()
 
     # {row[0]: {"year": row[1], "rating": row[2]} for row in movies}
-    return [{"Title": row[0], "Year": row[1], "Rating": row[2]} for row in movies]
+    return [{"Title": row[0], "Year": row[1], "Rating": row[2],
+             "Poster": row[3]} for row in movies]
 
 
-def add_movie(title, year, rating):
+def add_movie(title, year, rating, poster):
     """Add a new movie to the database."""
     with engine.connect() as connection:
         try:
-            connection.execute(text("INSERT INTO movies (Title, Year, Rating) VALUES (:Title, :Year, :Rating)"),
-                               {"Title": title, "Year": year, "Rating": rating})
+            connection.execute(text("INSERT INTO movies "
+                                    "(Title, Year, Rating, Poster) "
+                                    "VALUES (:Title, :Year, :Rating, :Poster)"),
+                               {"Title": title, "Year": year,
+                                "Rating": rating, "Poster": poster})
             connection.commit()
-            # print(f"Movie '{title}' added successfully.")
+
         except Exception as e:
             print(f"Error: {e}")
 
