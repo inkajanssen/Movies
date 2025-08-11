@@ -1,5 +1,4 @@
 import random
-import sys
 from datetime import datetime
 
 import matplotlib.pyplot as plt
@@ -7,6 +6,7 @@ from colorama import Fore
 from fuzzywuzzy import fuzz
 
 import movie_storage_sql as ms
+from movie_fetcher import get_info_from_api
 
 START_RATING = 0
 END_RATING = 10.0
@@ -101,6 +101,36 @@ def validate_year():
         print(Fore.RED + f"Your input {new_year} was invalid. Please enter a number between {START_YEAR} and {END_YEAR}.")
 
 
+def fetch_movie_infos(title:str, movies:list):
+    """
+    Searches the movie in OMDb API, and fetches the following parameters:
+    Title, Year, Rating, Poster Image URL
+    Because searching with incomplete title is possible and the API gives
+    back a random movie a question is added for confirmation of the user
+    :return: Title, Year, Rating, Poster Image URL
+    """
+
+    movie_info = get_info_from_api(title)
+
+    if movie_info.get("Response") == "False":
+        print(Fore.RED + "Your movie could not be found. "
+                         "Please try again.")
+        return main()
+
+    title = movie_info.get("Title")
+    response = input(Fore.GREEN +
+                     f"Is this ({title}) the movie you want to add?"
+                                  " (y for yes, n for no)")
+
+    if response == "n":
+        return add_movie(movies)
+
+    year = movie_info.get("Year")
+    rating = movie_info.get("imdbRating")
+    poster_url = movie_info.get("Poster")
+    return title, year, rating, poster_url
+
+
 def validate_ranking():
     """
     Validate the input if it should be reverse or not
@@ -135,8 +165,8 @@ def list_movies(movies: list):
 def add_movie(movies: list):
     """
     Add another entry to the dict
-    Validate entries
-    Save it to file
+    Ask for movie name
+    Fetch information from API
     :param movies:
     :return:
     """
@@ -146,12 +176,11 @@ def add_movie(movies: list):
     if name_movie == 'q':
         return None
 
-    rate_movie = validate_rating()
-    year_movie = validate_year()
+    title, year, rating, poster_url = fetch_movie_infos(name_movie, movies)
 
-    ms.add_movie(name_movie, year_movie, rate_movie)
+    ms.add_movie(title, year, rating, poster_url)
 
-    print(Fore.BLUE + f"Movie {name_movie} successfully added!")
+    print(Fore.BLUE + f"Movie {title} successfully added!")
     return None
 
 
@@ -182,12 +211,15 @@ def update_movie(movies: list):
     :return:
     """
 
-    name_movie = input(Fore.GREEN + "Please enter the movie name to update:")
+    name_movie = input(Fore.GREEN +
+                       "Please enter the movie name to update:")
+
     for movie in movies:
         if name_movie == movie['Title']:
             new_rating = validate_rating()
             ms.update_movie(name_movie, new_rating)
-            print(Fore.BLUE + f"Movie {name_movie} successfully updated!")
+            print(Fore.BLUE +
+                  f"Movie {name_movie} successfully updated!")
             return None
 
     print(Fore.RED + f"Movie {name_movie} doesn't exist!")
@@ -391,11 +423,6 @@ def main():
         10: filter_movies,
         11: histogram
     }
-
-    #movies = ms.list_movies()
-    #print(type(movies))
-    #print(movies)
-    #sys.exit(0)
 
     while True:
         print_menu()
