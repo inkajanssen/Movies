@@ -6,6 +6,7 @@ from colorama import Fore
 from fuzzywuzzy import fuzz
 
 import movie_storage_sql as ms
+import movies_web_generator as web_gen
 from movie_fetcher import get_info_from_api
 
 START_RATING = 0
@@ -35,8 +36,9 @@ def print_menu():
     9.  Movies sorted by year
     10. Filter movie
     11. Create Rating Histogram
+    12. Generate Website
     
-    Enter choice (0-11): 
+    Enter choice (0-12): 
     """)
 
 
@@ -115,20 +117,20 @@ def fetch_movie_infos(title:str, movies:list):
     if movie_info.get("Response") == "False":
         print(Fore.RED + "Your movie could not be found. "
                          "Please try again.")
-        return main()
+        return None
 
     title = movie_info.get("Title")
     response = input(Fore.GREEN +
                      f"Is this ({title}) the movie you want to add?"
                                   " (y for yes, n for no)")
 
-    if response == "n":
-        return add_movie(movies)
-
-    year = movie_info.get("Year")
-    rating = movie_info.get("imdbRating")
-    poster_url = movie_info.get("Poster")
-    return title, year, rating, poster_url
+    if response.lower() == "y":
+        year = movie_info.get("Year")
+        rating = movie_info.get("imdbRating")
+        poster_url = movie_info.get("Poster")
+        return title, year, rating, poster_url
+    else:
+        return "retry"
 
 
 def validate_ranking():
@@ -171,17 +173,20 @@ def add_movie(movies: list):
     :return:
     """
 
-    name_movie = validate_title(movies)
+    while True:
+        name_movie = validate_title(movies)
 
-    if name_movie == 'q':
+        if name_movie == 'q':
+            return None
+
+        movie_data = fetch_movie_infos(name_movie, movies)
+        if movie_data == "retry":
+            continue
+
+        title, year, rating, poster_url = movie_data
+        ms.add_movie(title, year, rating, poster_url)
+        print(Fore.BLUE + f"Movie {title} successfully added!")
         return None
-
-    title, year, rating, poster_url = fetch_movie_infos(name_movie, movies)
-
-    ms.add_movie(title, year, rating, poster_url)
-
-    print(Fore.BLUE + f"Movie {title} successfully added!")
-    return None
 
 
 def delete_movie(movies: list):
@@ -394,6 +399,21 @@ def histogram(movies: list):
     plt.show()
 
 
+def generate_website(movies: list):
+    """
+    Read the html template
+    Create a new html file with output data
+    :param movies:
+    :return:
+    """
+    html_content = web_gen.load_html("index_template.html")
+
+    replace_info = web_gen.display_movie_info(html_content, movies)
+
+    web_gen.save_html("index.html", replace_info)
+    print(Fore.GREEN + "Website was successfully generated to the file index.html.")
+
+
 def pause():
     """
     Give the user a pause to read output and then print menu again
@@ -405,7 +425,7 @@ def pause():
 def main():
     """
     Get the input of the user and match it to one of the functions.
-    The data is stored in an extra file for persistant storage
+    The data is stored in an extra db for persistent storage
     :return:
     """
 
@@ -421,7 +441,8 @@ def main():
         8: ranking_by_rating,
         9: ranking_by_year,
         10: filter_movies,
-        11: histogram
+        11: histogram,
+        12: generate_website
     }
 
     while True:
