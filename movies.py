@@ -5,9 +5,9 @@ import matplotlib.pyplot as plt
 from colorama import Fore
 from fuzzywuzzy import fuzz
 
-import movie_storage_sql as ms
-import movies_web_generator as web_gen
-from movie_fetcher import get_info_from_api
+from storage import *
+from api import *
+from web import *
 
 START_RATING = 0
 END_RATING = 10.0
@@ -184,7 +184,7 @@ def add_movie(movies: list):
             continue
 
         title, year, rating, poster_url = movie_data
-        ms.add_movie(title, year, rating, poster_url)
+        add_movie(title, year, rating, poster_url)
         print(Fore.BLUE + f"Movie {title} successfully added!")
         return None
 
@@ -200,7 +200,7 @@ def delete_movie(movies: list):
     name_movie = input(Fore.GREEN + "Please enter the movie name to delete:")
     for movie in movies:
         if name_movie == movie['Title']:
-            ms.delete_movie(movie['Title'])
+            delete_movie(movie['Title'])
             print(Fore.BLUE + f"Movie {name_movie} successfully deleted!")
             return None
 
@@ -222,7 +222,7 @@ def update_movie(movies: list):
     for movie in movies:
         if name_movie == movie['Title']:
             new_rating = validate_rating()
-            ms.update_movie(name_movie, new_rating)
+            update_movie(name_movie, new_rating)
             print(Fore.BLUE +
                   f"Movie {name_movie} successfully updated!")
             return None
@@ -406,11 +406,11 @@ def generate_website(movies: list):
     :param movies:
     :return:
     """
-    html_content = web_gen.load_html("index_template.html")
+    html_content = load_html("web/index_template.html")
 
-    replace_info = web_gen.display_movie_info(html_content, movies)
+    replace_info = display_movie_info(html_content, movies)
 
-    web_gen.save_html("index.html", replace_info)
+    save_html("web/index.html", replace_info)
     print(Fore.GREEN + "Website was successfully generated to the file index.html.")
 
 
@@ -455,7 +455,7 @@ def main():
                 print("Bye!")
                 return False
             if option in menu_functions:
-                menu_functions[option](ms.list_movies())
+                menu_functions[option](list_movies())
                 pause()
             else:
                 print(Fore.RED + "Wrong input")

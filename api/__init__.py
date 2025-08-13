@@ -1,0 +1,1 @@
+from movie_fetcher import get_info_from_api
