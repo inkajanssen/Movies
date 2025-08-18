@@ -1,7 +1,7 @@
 # Movies
 
 Movies is an application which stores Movies in a SQL DB with CRUD and analytics.
-It also provides getting information about a movie via an API an generates a website.
+It also provides getting information about a movie via an API and generates a website.
 
 ## Installation
 
@@ -11,8 +11,8 @@ All required imports are listed in the requirements.txt.
 
 1. To start with a new DB, delete movies.db, its just an example what the DB looks like.
 2. For the API you need a API Key from [OMDb](https://www.omdbapi.com/)
-2. Create an .env in api and add you API Key like this: API_KEY={your API Key}
-3. Run the movies.py file
+3. Create an .env in api and add you API Key like this: API_KEY={your API Key} 
+4. Run the movies.py file
 
 ## Features
 
@@ -28,6 +28,7 @@ All required imports are listed in the requirements.txt.
     10. Filter movie
     11. Create Rating Histogram
     12. Generate Website 
+
 ## Roadmap
 
 * [ ] User Profiles
