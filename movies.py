@@ -75,12 +75,14 @@ def validate_rating():
         try:
             new_rating = float(new_rating)
         except ValueError:
-            print(Fore.RED + f"Please enter a number between {START_RATING} and {END_RATING}.")
+            print(Fore.RED + f"Please enter a number between"
+                             f" {START_RATING} and {END_RATING}.")
 
         if START_RATING <= new_rating <= END_RATING:
             return new_rating
 
-        print(Fore.RED + f"Your input {new_rating} was invalid. Please enter a number between {START_RATING} and {END_RATING}.")
+        print(Fore.RED + f"Your input {new_rating} was invalid.Please enter"
+                         f"a number between {START_RATING} and {END_RATING}.")
 
 
 def validate_year():
@@ -94,14 +96,15 @@ def validate_year():
         try:
             new_year = int(new_year)
         except ValueError:
-            print(Fore.RED + f"Please enter just a number between {START_YEAR} and {END_YEAR}.")
+            print(Fore.RED + f"Please enter just a number between"
+                             f" {START_YEAR} and {END_YEAR}.")
 
         if START_YEAR <= new_year <= END_YEAR:
             print(END_YEAR)
             return new_year
 
-        print(Fore.RED + f"Your input {new_year} was invalid. Please enter a number between {START_YEAR} and {END_YEAR}.")
-
+        print(Fore.RED + f"Your input {new_year} was invalid. Please enter"
+                         f" a number between {START_YEAR} and {END_YEAR}.")
 
 def fetch_movie_infos(title:str, movies:list):
     """
@@ -258,13 +261,15 @@ def stats_movie(movies: list):
     max_value = max(ratings)
     for movie in movies:
         if movie['Rating'] == max_value:
-            print(Fore.BLUE + f"Best movie: {movie['Title']}, {movie['Rating']}")
+            print(Fore.BLUE + f"Best movie: {movie['Title']},"
+                              f" {movie['Rating']}")
 
     # Worst
     min_value = min(ratings)
     for movie in movies:
         if movie['Rating'] == min_value:
-            print(Fore.BLUE + f"Worst movie: {movie['Title']}, {movie['Rating']}")
+            print(Fore.BLUE + f"Worst movie: {movie['Title']},"
+                              f" {movie['Rating']}")
 
 
 def random_movie(movies: list):
@@ -275,9 +280,11 @@ def random_movie(movies: list):
     """
 
     today_movie = random.choice([movie['Title'] for movie in movies])
-    today_rating = next(movie['Rating'] for movie in movies if movie['Title'] == today_movie)
+    today_rating = next(movie['Rating'] for movie in movies if
+                        movie['Title'] == today_movie)
 
-    print(Fore.BLUE + f"Your movie for tonight: {today_movie}, it's rated {today_rating}")
+    print(Fore.BLUE + f"Your movie for tonight: {today_movie},"
+                      f" it's rated {today_rating}")
 
 
 def search_movie(movies: list):
@@ -300,7 +307,8 @@ def search_movie(movies: list):
 
     if not match_found:
         if fuzzy_matches:
-            print(Fore.BLUE + f"The movie {part_search} does not exist. Did you mean:")
+            print(Fore.BLUE + f"The movie {part_search} does not exist."
+                              f" Did you mean:")
             for match in fuzzy_matches:
                 print(match)
         else:
@@ -314,7 +322,8 @@ def ranking_by_rating(movies: list):
     :return:
     """
 
-    sorted_by_rating = sorted(movies, key=lambda movie: movie['Rating'], reverse=True)
+    sorted_by_rating = (
+        sorted(movies, key=lambda movie: movie['Rating'], reverse=True))
     for value in sorted_by_rating:
         print(Fore.BLUE + f"{value['Title']}: {value['Rating']}")
 
@@ -338,7 +347,8 @@ def ranking_by_year(movies: list):
 
 def filter_movies(movies: list):
     """
-    Filter a list of movies based on specific criteria such as minimum rating, start year, and end year
+    Filter a list of movies based on specific criteria
+    such as minimum rating, start year, and end year
     :param movies:
     :return:
     """
@@ -367,16 +377,19 @@ def filter_movies(movies: list):
 
     filtered_movies = []
     for movie in movies:
-        if start_year <= movie.get('Year') <= end_year and movie.get('Rating') >= rating:
+        if (start_year <= movie.get('Year') <= end_year and
+                movie.get('Rating') >= rating):
             filtered_movies.append(movie)
 
-    found_movies= sorted(filtered_movies, key=lambda k:( movie['Year'], movie['Rating']))
+    found_movies= sorted(filtered_movies,
+                         key=lambda k:( movie['Year'], movie['Rating']))
 
     if not found_movies:
         print(Fore.BLUE + "No movies were found")
     else:
         for movie in found_movies:
-            print(Fore.BLUE + f"{movie['Title']} ({movie['Year']}): {movie['Rating']}")
+            print(Fore.BLUE +
+                  f"{movie['Title']} ({movie['Year']}): {movie['Rating']}")
 
 
 def histogram(movies: list):
@@ -411,7 +424,8 @@ def generate_website(movies: list):
     replace_info = display_movie_info(html_content, movies)
 
     save_html("web/index.html", replace_info)
-    print(Fore.GREEN + "Website was successfully generated to the file index.html.")
+    print(Fore.GREEN + "Website was successfully generated"
+                       " to the file index.html.")
 
 
 def pause():
