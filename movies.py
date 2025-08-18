@@ -120,7 +120,7 @@ def fetch_movie_infos(title:str, movies:list):
     if movie_info.get("Response") == "False":
         print(Fore.RED + "Your movie could not be found. "
                          "Please try again.")
-        return None
+        return "retry"
 
     title = movie_info.get("Title")
     response = input(Fore.GREEN +
@@ -131,7 +131,8 @@ def fetch_movie_infos(title:str, movies:list):
         year = movie_info.get("Year")
         rating = movie_info.get("imdbRating")
         poster_url = movie_info.get("Poster")
-        return title, year, rating, poster_url
+        movie_data = title, year, rating, poster_url
+        return movie_data
     else:
         return "retry"
 
@@ -155,7 +156,7 @@ def validate_ranking():
     return ranking
 
 
-def list_movies(movies: list):
+def print_movies(movies: list):
     """
     Print the total number of movies as well as each movie in an extra line
     :param movies:
@@ -167,7 +168,7 @@ def list_movies(movies: list):
         print(Fore.BLUE + f"{movie['Title']} ({movie['Year']}): {movie['Rating']}")
 
 
-def add_movie(movies: list):
+def adds_movie(movies: list):
     """
     Add another entry to the dict
     Ask for movie name
@@ -192,7 +193,7 @@ def add_movie(movies: list):
         return None
 
 
-def delete_movie(movies: list):
+def deletes_movie(movies: list):
     """
     Delete an entry if it exists in movies
     Saves the changes to a file
@@ -211,7 +212,7 @@ def delete_movie(movies: list):
     return None
 
 
-def update_movie(movies: list):
+def updates_movie(movies: list):
     """
     Update a movies ranking if it exists
     Saves the update to a file
@@ -445,10 +446,10 @@ def main():
 
     # Dictionary to get functions
     menu_functions = {
-        1: list_movies,
-        2: add_movie,
-        3: delete_movie,
-        4: update_movie,
+        1: print_movies,
+        2: adds_movie,
+        3: deletes_movie,
+        4: updates_movie,
         5: stats_movie,
         6: random_movie,
         7: search_movie,
