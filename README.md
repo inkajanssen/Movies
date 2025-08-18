@@ -5,7 +5,7 @@ It also provides getting information about a movie via an API an generates a web
 
 ## Installation
 
-For all required imports are listed in the requirements.txt.
+All required imports are listed in the requirements.txt.
 
 ## Run
 
@@ -28,6 +28,13 @@ For all required imports are listed in the requirements.txt.
     10. Filter movie
     11. Create Rating Histogram
     12. Generate Website 
+## Roadmap
+
+* [ ] User Profiles
+* [ ] Adding Notes
+* [ ] Add Rating to Website
+* [ ] Add IMDB Link
+* [ ] Add Country Flag
 
 ## Additional Information
 In storage there are two different options to store your data: in a JSON file and in a SQL SB.
