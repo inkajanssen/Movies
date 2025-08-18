@@ -1,2 +1,1 @@
-from movie_storage import *
-from movie_storage_sql import *
+from .movie_storage_sql import *

@@ -1,1 +1,1 @@
-from movies_web_generator import *
+from .movies_web_generator import load_html, save_html, collect_movie_info, display_movie_info
